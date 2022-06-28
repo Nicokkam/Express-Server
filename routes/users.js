@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 var passport = require('passport');
 var authenticate = require('../authenticate');
 const mongoose = require('mongoose');
+const cors = require('./cors');
 
 var User = require('../models/user');
 
@@ -12,7 +13,7 @@ userRouter.use(bodyParser.json());
 
 /* GET users listing. */
 userRouter.route('/')
-  .get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+  .get(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     User.find({})
       .then((user) => {
         res.statusCode = 200;
@@ -23,7 +24,7 @@ userRouter.route('/')
   });
 
 userRouter.route('/signup')
-  .post((req, res, next) => {
+  .post(cors.corsWithOptions, (req, res, next) => {
     User.register(new User({ username: req.body.username }),
       req.body.password, (err, user) => {
         if (err) {
@@ -54,7 +55,7 @@ userRouter.route('/signup')
   });
 
 userRouter.route('/login')
-  .post(passport.authenticate('local'), (req, res) => {
+  .post(cors.corsWithOptions, passport.authenticate('local'), (req, res) => {
 
     var token = authenticate.getToken({ _id: req.user._id });
     res.statusCode = 200;
@@ -63,7 +64,7 @@ userRouter.route('/login')
   });
 
 userRouter.route('/logout')
-  .get((req, res) => {
+  .get(cors.corsWithOptions, (req, res) => {
     if (req.session) {
       req.session.destroy();
       res.clearCookie('session');
