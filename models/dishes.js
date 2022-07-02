@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 require('mongoose-currency').loadType(mongoose);
 const Currency = mongoose.Types.Currency;
+var passportLocalMongoose = require('passport-local-mongoose');
 
 var commentSchema = new Schema({
   rating: {
@@ -58,6 +59,7 @@ var dishSchema = new Schema({
   timestamps: true
 });
 
-var Dishes = mongoose.model('Dish', dishSchema);
+var Dishes = mongoose.model('Dish', dishSchema); //Dish Is the name that goes to the population!!!
+dishSchema.plugin(passportLocalMongoose);
 
 module.exports = Dishes;
